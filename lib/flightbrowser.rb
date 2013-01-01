@@ -93,6 +93,7 @@ class FlightBrowser
 				end
 			end
 		end
+		p places
 		add_latlong_to_prices(places)
 		safe_cache { cache.set(key, places) }
 		return places
@@ -124,5 +125,6 @@ class FlightBrowser
 			green = 255 - red
 			price[:rgb] = sprintf("%02x%02x%02x", red, green, 0)
 		end
+		prices.select! {|e| e.has_key?(:lat)}
 	end
 end
