@@ -8,8 +8,9 @@ class FlightBrowser
 	RootPath = File.expand_path(File.dirname(__FILE__) + '/..')
 	@latlong_source = RootPath + '/latlong.json'
 	begin
-	rescue
 		@cache = Dalli::Client.new
+	rescue Exception => e
+		p "Something went wrong: #{e.message}"
 	end
 
 	def cache
