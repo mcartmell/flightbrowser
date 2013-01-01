@@ -93,7 +93,6 @@ class FlightBrowser
 				end
 			end
 		end
-		p places
 		add_latlong_to_prices(places)
 		safe_cache { cache.set(key, places) }
 		return places
