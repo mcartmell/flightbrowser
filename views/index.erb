@@ -49,6 +49,7 @@
   function update_map (stuff) {
     var city = stuff[0].value;
     var month = stuff[1].value;
+		deleteOverlays();
     $.getJSON('/ajax/' + city + '/' + month, function(data) {
       update_prices(data);
     });
@@ -99,16 +100,20 @@
   js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=310601029052077";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
-    <div id="form" style="position: relative; width: 60%; left: 50%; margin-left: -30%">
+		<table style="margin: auto">
+		<tr>
+		<td>
     <form id="theform">
-      City: <input type="text" name="city" value="Manchester"> Month: <select name="month">
+      Flying from <input type="text" name="city" value="Manchester"> in <select name="month">
 <% months.each do |m| %>
 
       <option value="<%= m %>"><%= m %></option>
 <% end %>
-      </select><input type="button" value="Update" onClick="update_map(jQuery('#theform').serializeArray())" /><img src="/images/loader.gif" id="loader" />
+      </select><input type="button" value="Fly me" onClick="update_map(jQuery('#theform').serializeArray())" /><img src="/images/loader.gif" id="loader" />
     </form>
-    </div>
+		</td>
+		</tr>
+		</table>
     <div id="map_canvas" style="width: 100%; height: 600px;"></div>
 <div class="fb-comments" data-href="http://flightbrowser.mikec.me" data-width="470" data-num-posts="5"></div>
   </body>

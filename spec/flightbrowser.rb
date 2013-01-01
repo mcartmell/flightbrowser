@@ -23,4 +23,10 @@ describe FlightBrowser do
 		fb.add_latlong_to_prices(prices)
 		prices[0].should include(:rgb => 'ff0000', :lat => 62, :long => 15)
 	end
+
+	it "can get the code for london", :quick => true do
+		fb = FlightBrowser.new
+		code = fb.get_code_for_city("London")
+		code.should == 'lond'
+	end
 end
