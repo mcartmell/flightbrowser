@@ -91,6 +91,14 @@
     </script>
   </head>
   <body onload="initialize()">
+	<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=310601029052077";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
     <div id="form" style="position: relative; width: 60%; left: 50%; margin-left: -30%">
     <form id="theform">
       City: <input type="text" name="city" value="Manchester"> Month: <select name="month">
@@ -102,6 +110,7 @@
     </form>
     </div>
     <div id="map_canvas" style="width: 100%; height: 600px;"></div>
+<div class="fb-comments" data-href="http://flightbrowser.mikec.me" data-width="470" data-num-posts="5"></div>
   </body>
 </html>
 
