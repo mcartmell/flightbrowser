@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <script type="text/javascript">
+  var geocoder;
+  var map;
+  var prices = <%= json %>;
+  var markersArray = [];
+
+  function update_prices(price_array) {
+    price_array.forEach(function(x) {
+      if (x.price) {
+        add_marker_for_place(x.name, x.price, x.lat, x.long, x.rgb, x.url);
+      }
+    });
+  }
+
+  function add_marker_for_place(place, num, lat, long, rgb, url) {
+     var pos = new google.maps.LatLng(lat, long);
+     var label = new Label({
+       map: map,
+       position: pos,
+       text: num,
+       title: place,
+       labelStyle: { color: '#' + rgb, 'font-family': 'ubuntu', 'font-size': '18px' }
+     });
+     var z = 1;
+     var infocontent = '<h2 style="margin: 0">' + place + '</h2>' + 
+     '<a href="http://www.skyscanner.net' + url + '">£' + num + '</a>';
+     var infowindow = new google.maps.InfoWindow({
+           content: infocontent
+     });
+     google.maps.event.addListener(label, 'mouseover', function() { label.div_.style['z-index'] = z++; });
+     google.maps.event.addListener(label, 'click', function() {
+       infowindow.open(map, label);
+     });
+     markersArray.push(label);
+  }
+
+  function deleteOverlays() {
+    if (markersArray) {
+      for (i in markersArray) {
+        markersArray[i].setMap(null);
+      }
+      markersArray.length = 0;
+    }
+  }
+
+  function update_map (stuff) {
+    var city = stuff[0].value;
+    var month = stuff[1].value;
+    $.getJSON('/ajax/' + city + '/' + month, function(data) {
+      update_prices(data);
+    });
+  }
+
+  </script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+    <script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAEJ76oKOmS7a1T8YfLYICt24kBuCSIRvE&sensor=false">
+    </script>
+  <script src="/javascripts/jquery.js" type="text/javascript"></script>
+  <script src="/javascripts/label.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      function initialize() {
+        geocoder = new google.maps.Geocoder();
+        var myOptions = {
+          center: new google.maps.LatLng(54,-2),
+          zoom: 2,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map_canvas"),
+            myOptions);
+
+       update_prices(prices);
+      }
+      jQuery(document).ready(function() {
+        jQuery('#loader').ajaxStart(function() { 
+          jQuery(this).show();
+        });
+        jQuery('#loader').ajaxStop(function() { 
+          jQuery(this).hide();
+        });
+        jQuery('#loader').hide();
+      });
+    </script>
+  </head>
+  <body onload="initialize()">
+    <div id="form" style="position: relative; width: 60%; left: 50%; margin-left: -30%">
+    <form id="theform">
+      City: <input type="text" name="city" value="Manchester"> Month: <select name="month">
+<% months.each do |m| %>
+
+      <option value="<%= m %>"><%= m %></option>
+<% end %>
+      </select><input type="button" value="Update" onClick="update_map(jQuery('#theform').serializeArray())" /><img src="/images/loader.gif" id="loader" />
+    </form>
+    </div>
+    <div id="map_canvas" style="width: 100%; height: 600px;"></div>
+  </body>
+</html>
+

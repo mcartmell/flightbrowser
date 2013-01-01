@@ -1,0 +1,2 @@
+require 'fbweb'
+run FlightBrowserWeb
