@@ -8,6 +8,14 @@ class FlightBrowser
 	require 'dalli'
 	require 'memcachier'
 
+  require 'money'
+  require 'money/bank/google_currency'
+  require 'json'
+  #MultiJson.engine = :json_gem # or :yajl
+  
+  # set default bank to instance of GoogleCurrency
+  Money.default_bank = Money::Bank::GoogleCurrency.new
+
 	# set the root path
 	RootPath = File.expand_path(File.dirname(__FILE__) + '/..')
 	@latlong_source = RootPath + '/latlong.json'
@@ -77,11 +85,15 @@ class FlightBrowser
 		end
 		places = []
 		code = get_code_for_city(city)
+		currency = :GBP
 		return [] unless code
 		url = "http://www.skyscanner.net/flights-from/#{code}/#{month}-#{year}/#{month}-#{year}/cheapest-flights-from-#{city}-in-#{month}-#{year}.html";
 		places = []
 		open(url, "User-Agent" => agent.user_agent) do |f|
 			str = f.read
+			if (m = str.match(/currency:"([^"]+)/)) 
+				currency = m[1].upcase.to_sym
+			end
 			str.match(%r#SS\.data\.browse =.*?results:\s+(\[[^\]]+\])#m) do |json|
 				hash = JSON.parse(%Q{{"results": #{json[1]}}})
 				hash['results'].each do |row|
@@ -91,6 +103,12 @@ class FlightBrowser
 						url: row['url']
 					})
 				end
+			end
+		end
+		places.select! {|e| e[:price]}
+		if currency != :GBP
+			places.each do |place|
+				place[:price] = place[:price].to_money(currency).exchange_to(:GBP).to_f.round
 			end
 		end
 		add_latlong_to_prices(places)
