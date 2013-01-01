@@ -7,11 +7,7 @@ class FlightBrowser
 
 	RootPath = File.expand_path(File.dirname(__FILE__) + '/..')
 	@latlong_source = RootPath + '/latlong.json'
-	begin
-		@cache = Dalli::Client.new
-	rescue Exception => e
-		p "Something went wrong: #{e.message}"
-	end
+	@cache = Dalli::Client.new
 
 	def cache
 		self.class.cache
@@ -21,12 +17,19 @@ class FlightBrowser
 		@cache
 	end
 
+	def safe_cache (&block)
+		begin
+			return block.call()
+		rescue Dalli::RingError
+		end
+	end
+
 	def get_data(city, month)
 		city.downcase!
 		month.downcase!
 		year = DateTime.now.year
 		key = "data-#{city}-#{month}"
-		if (cache && data = cache.get(key))
+		if (data = safe_cache { cache.get(key) })
 			return data
 		end
 		places = []
@@ -46,7 +49,7 @@ class FlightBrowser
 			end
 		end
 		add_latlong_to_prices(places)
-		cache.set(key, places) if cache
+		safe_cache { cache.set(key, places) }
 		return places
 	end
 
