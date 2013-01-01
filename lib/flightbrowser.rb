@@ -53,7 +53,7 @@ class FlightBrowser
 			end.submit
 			if (m = res.uri.path.match(%r{flights/([^/]+)}))
 				code = m[1]
-				safe_cache { cache.set(key) }
+				safe_cache { cache.set(key, code) }
 			end
 			return code
 		end
