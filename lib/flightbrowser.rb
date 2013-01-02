@@ -128,7 +128,7 @@ class FlightBrowser
 # @param prices Array<Hash>
 	def add_latlong_to_prices(prices)
 		ll = self.class.latlong
-		prices.select! {|e| e[:price] && e[:price] < 1000}
+		prices.select! {|e| e[:price] && e[:price] < 2000}
 		max_price = prices.map {|e| e[:price]}.max
 		prices.each do |price|
 			country = price[:name]
@@ -137,10 +137,6 @@ class FlightBrowser
 			long = ll[country]['long']
 			price[:lat] = lat.to_f
 			price[:long] = long.to_f
-			price_pct = price[:price] / max_price.to_f
-			red = (price_pct * 255).round
-			green = 255 - red
-			price[:rgb] = sprintf("%02x%02x%02x", red, green, 0)
 		end
 		prices.select! {|e| e.has_key?(:lat)}
 	end
