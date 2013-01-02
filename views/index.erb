@@ -48,7 +48,7 @@ var flyme = (function($) {
      });
      markersArray.push({ 'label': label, price: num });
 		},
-		delete_overlays: function deleteOverlays() {
+		delete_overlays: function () {
     if (markersArray) {
       for (i in markersArray) {
         markersArray[i].label.setMap(null);
@@ -82,7 +82,7 @@ var flyme = (function($) {
 		update_map: function (stuff) {
     var city = stuff[0].value;
     var month = stuff[1].value;
-		this.deleteOverlays();
+		this.delete_overlays();
     $.getJSON('/ajax/' + city + '/' + month, function(data) {
       this.update_prices(data);
     });
