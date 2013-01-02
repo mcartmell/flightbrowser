@@ -61,8 +61,8 @@ var flyme = (function($) {
 			markersArray.forEach(function(elem) {
 			var price = elem.price
 			var price_pct = (price - min_price) / (max_price - min_price)
-			red = Math.round(price_pct * 255)
-			green = 255 - red
+			var red = Math.round(price_pct * 255)
+			var green = 255 - red
 			elem.label.span_.style.color = 'rgb(' + red + ',' + green + ',0)';
 			});
 		},
@@ -82,11 +82,13 @@ var flyme = (function($) {
 		update_map: function (stuff) {
     var city = stuff[0].value;
     var month = stuff[1].value;
+		var min_price = $('#slider-range').slider('values', 0);
+		var max_price = $('#slider-range').slider('values', 1);
 		var self = this;
 		this.delete_overlays();
     $.getJSON('/ajax/' + city + '/' + month, function(data) {
       self.update_prices(data);
-			self.update_colours(0,2000);
+			self.filter_by_price(min_price,max_price);
     });
   }
 	}
