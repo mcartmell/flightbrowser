@@ -86,6 +86,7 @@ var flyme = (function($) {
 		this.delete_overlays();
     $.getJSON('/ajax/' + city + '/' + month, function(data) {
       self.update_prices(data);
+			self.update_colours(0,2000);
     });
   }
 	}
